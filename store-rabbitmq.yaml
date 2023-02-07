@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-store-deployment
+  labels:
+    app: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq-store
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-store
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.9.13-management
+        ports:
+        - containerPort: 5672
+        env:
+          - name: RABBITMQ_DEFAULT_USER
+            value: user
+          - name: RABBITMQ_DEFAULT_PASS
+            value: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq 
+spec:
+  type: ClusterIP
+  selector:
+    app: rabbitmq-store
+  ports:
+    - protocol: TCP
+      port: 5672
+      targetPort: 5672
+---
